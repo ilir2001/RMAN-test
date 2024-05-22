@@ -75,6 +75,7 @@ namespace RMAN_test.Server.Controllers
             return BadRequest(ModelState);
         }
 
+        [Authorize]
         [Route("api/check")]
         [HttpGet]
         public IActionResult CheckLoginStatus()
@@ -89,6 +90,7 @@ namespace RMAN_test.Server.Controllers
             return Ok(new { loggedIn = false });
         }
 
+        [Authorize]
         [Route("api/logout")]
         [HttpPost]
         public async Task<IActionResult> Logout()
@@ -97,6 +99,7 @@ namespace RMAN_test.Server.Controllers
             return Ok(new { Message = "Logout successful." });
         }
 
+        [Authorize]
         [Route("api/users")]
         [HttpGet]
         public IActionResult GetAllUsers()
@@ -104,6 +107,5 @@ namespace RMAN_test.Server.Controllers
             var users = _userManager.Users.ToList();
             return Ok(users);
         }
-
     }
 }
