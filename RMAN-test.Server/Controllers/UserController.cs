@@ -1,24 +1,24 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿// Controllers/UserController.cs
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RMAN_test.Server.Models;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+using RMAN_test.Server.Repositories;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace RMAN_test.Server.Controllers
 {
     public class UserController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IUserRepository _userRepository;
 
-        public UserController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public UserController(IUserRepository userRepository)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _userRepository = userRepository;
         }
-
 
         [Route("api/create")]
         [HttpPost]
@@ -40,7 +40,7 @@ namespace RMAN_test.Server.Controllers
                 Email = user.Email
             };
 
-            IdentityResult result = await _userManager.CreateAsync(appUser, user.Password);
+            IdentityResult result = await _userRepository.CreateUserAsync(appUser, user.Password);
 
             if (result.Succeeded)
             {
@@ -59,11 +59,11 @@ namespace RMAN_test.Server.Controllers
         {
             if (ModelState.IsValid)
             {
-                var appUser = await _userManager.FindByEmailAsync(loginRequest.Email);
+                var appUser = await _userRepository.FindByEmailAsync(loginRequest.Email);
                 if (appUser != null)
                 {
-                    await _signInManager.SignOutAsync();
-                    var result = await _signInManager.PasswordSignInAsync(appUser, loginRequest.Password, true, false);
+                    await _userRepository.SignOutAsync();
+                    var result = await _userRepository.PasswordSignInAsync(appUser, loginRequest.Password, true, false);
                     if (result.Succeeded)
                     {
                         return Ok(new { Message = "Login successful." });
@@ -80,10 +80,9 @@ namespace RMAN_test.Server.Controllers
         [HttpGet]
         public IActionResult CheckLoginStatus()
         {
-            if (User.Identity != null && User.Identity.IsAuthenticated)
+            if (_userRepository.IsUserAuthenticated(User))
             {
-                string userName = User.FindFirst(ClaimTypes.Name)?.Value;
-
+                string userName = _userRepository.GetUserName(User);
                 return Ok(new { loggedIn = true, userName });
             }
 
@@ -95,7 +94,7 @@ namespace RMAN_test.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
+            await _userRepository.SignOutAsync();
             return Ok(new { Message = "Logout successful." });
         }
 
@@ -104,7 +103,7 @@ namespace RMAN_test.Server.Controllers
         [HttpGet]
         public IActionResult GetAllUsers()
         {
-            var users = _userManager.Users.ToList();
+            var users = _userRepository.GetAllUsers();
             return Ok(users);
         }
     }

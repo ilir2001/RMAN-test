@@ -47,7 +47,6 @@ const Home = () => {
             const response = await axios.post('https://localhost:7110/api/logout', {}, {
                 withCredentials: true
             });
-            console.log(response.data);
             setLoggedIn(false);
         } catch (error) {
             console.error('Error logging out:', error);

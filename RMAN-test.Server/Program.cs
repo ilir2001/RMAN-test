@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using MongoDB.Driver;
 using RMAN_test.Server.Data;
 using RMAN_test.Server.Models;
+using RMAN_test.Server.Repositories;
 using RMAN_test.Server.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -55,6 +56,8 @@ builder.Services.AddCors(options =>
                    .AllowCredentials();
         });
 });
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Add controllers and Swagger
 builder.Services.AddControllers();
