@@ -73,7 +73,7 @@ namespace RMAN_test.Server.Controllers
                         return Ok(new { Message = "Login successful." });
                     }
                 }
-                ModelState.AddModelError(string.Empty, "Login Failed: Invalid Email or Password");
+                ModelState.AddModelError(string.Empty, "Invalid Email or Password");
             }
 
             return BadRequest(ModelState);

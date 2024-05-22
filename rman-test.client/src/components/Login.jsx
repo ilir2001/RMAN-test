@@ -44,7 +44,7 @@ const Login = () => {
             setMessage(response.data.Message);
             navigate('/'); // Redirect to '/'
         } catch (error) {
-            setMessage('Login failed: Invalid Email or Password');
+            setMessage('Invalid Email or Password');
         }
     };
 
@@ -81,7 +81,7 @@ const Login = () => {
                 <button type="submit" className="btn btn-primary">Login</button>
                 <button type="button" className="btn btn-link ms-2" onClick={handleRegisterClick}>Register</button>
             </form>
-            {message && <p>{message}</p>}
+            <div>{message && <p>{message}</p>}</div>
         </div>
     );
 };
