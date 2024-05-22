@@ -57,6 +57,10 @@ namespace RMAN_test.Server.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return BadRequest(new { Message = "You are already logged in." });
+            }
             if (ModelState.IsValid)
             {
                 var appUser = await _userRepository.FindByEmailAsync(loginRequest.Email);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,6 +8,25 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
+
+    useEffect(() => {
+        // Check login status when the component mounts
+        const checkLoginStatus = async () => {
+            try {
+                const response = await axios.get('https://localhost:7110/api/check', {
+                    withCredentials: true
+                });
+
+                if (response.data.loggedIn) {
+                    navigate('/'); // Redirect to home if already logged in
+                }
+            } catch (error) {
+                console.error('Error checking login status:', error);
+            }
+        };
+
+        checkLoginStatus();
+    }, [navigate]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
