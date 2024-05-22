@@ -64,7 +64,13 @@ const Home = () => {
                 <div>
                     <p className="mb-3">Welcome back, {userName}!</p>
                     <div className="d-flex justify-content-end">
-                        <button className="" onClick={handleLogout}><BoxArrowRight /></button>
+                        <button style={{
+                            paddingTop: '3px',
+                            paddingLeft: '7px',
+                            paddingRight: '7px',
+                            paddingBottom: '5px',
+                        }} onClick={handleLogout}><BoxArrowRight /></button>
+
                     </div>
                     <div>
                         <h4>Users List</h4>
