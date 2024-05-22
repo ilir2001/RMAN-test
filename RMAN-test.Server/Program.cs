@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
+using MongoDB.Driver;
+using RMAN_test.Server.Data;
 using RMAN_test.Server.Models;
 using RMAN_test.Server.Settings;
 
@@ -15,6 +17,22 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
            mongoDbSettings.ConnectionString, mongoDbSettings.Name
        )
        .AddDefaultTokenProviders();
+
+
+// Register MongoDbContext
+builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
+{
+    return new MongoClient(mongoDbSettings.ConnectionString);
+});
+
+builder.Services.AddScoped(serviceProvider =>
+{
+    var mongoClient = serviceProvider.GetRequiredService<IMongoClient>();
+    var database = mongoClient.GetDatabase(mongoDbSettings.Name);
+    return new MongoDbContext(mongoDbSettings.ConnectionString, mongoDbSettings.Name);
+});
+
+
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
